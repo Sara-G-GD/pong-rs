@@ -87,6 +87,13 @@ fn update(state : &mut GameState, delta_time : f32) {
     if state.event.keyboard_state().is_scancode_pressed(Scancode::Down) {
         state.paddle_1.position.y += 1.0 * delta_time;
     }
+
+    state.paddle_1.position.y = state.paddle_1
+        .position.y
+        .clamp((state.paddle_1.rect.h/2) as f32, (state.screen.h-state.paddle_1.rect.h/2) as f32);
+    state.paddle_2.position.y = state.paddle_2
+        .position.y
+        .clamp((state.paddle_2.rect.h/2) as f32, (state.screen.h-state.paddle_2.rect.h/2) as f32);
 }
 
 fn draw(state : &GameState, canvas : &mut WindowCanvas) {
