@@ -88,9 +88,11 @@ fn update(state : &mut GameState, delta_time : f32) {
         state.paddle_1.position.y += 1.0 * delta_time;
     }
 
+    // clamp paddle y positions
     state.paddle_1.position.y = state.paddle_1
         .position.y
         .clamp((state.paddle_1.rect.h/2) as f32, (state.screen.h-state.paddle_1.rect.h/2) as f32);
+
     state.paddle_2.position.y = state.paddle_2
         .position.y
         .clamp((state.paddle_2.rect.h/2) as f32, (state.screen.h-state.paddle_2.rect.h/2) as f32);
@@ -127,20 +129,24 @@ fn main() {
             FVec { x: 25.0 , y: (h/2) as f32 },
             FVec::zero()
         ),
+
         // create the opponent paddle
         paddle_2: RectObject::new(
             Rect::new(-25/2, -50, 25, 100),
             FVec { x: (w-25) as f32, y: (h/2) as f32 },
             FVec::zero()
         ),
+
         // create the ball at the center
         ball: RectObject::new(
             Rect::new(-25/2, -25/2, 25, 25),
             FVec { x: (w/2) as f32, y: (h/2) as f32 },
             FVec { x: -0.25, y: 0.25 }
         ),
+
         // create an event pump for event handling
         event: context.event_pump().unwrap(),
+
         // generate the screen rect
         screen: Rect::new(
             0, 0, w as u32, h as u32
@@ -152,19 +158,23 @@ fn main() {
     canvas.clear();
     canvas.present();
 
+    // make a timer to track the delta time
     let mut frame_timer = Instant::now();
 
     'running: loop {
+        // clear pure black, draw, present to window
         canvas.set_draw_color(Color::RGB(0,0,0));
         canvas.clear();
-
         draw(&game_state, &mut canvas);
-
         canvas.present();
 
-        update(&mut game_state, (frame_timer.elapsed().as_micros() as f32) / 1000f32);
+        // update game logic
+        update(&mut game_state,(frame_timer.elapsed().as_micros() as f32) / 1000f32);
+
+        // reset timer
         frame_timer = Instant::now();
 
+        // poll and process events
         for event in game_state.event.poll_iter() {
             match event {
                 Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
