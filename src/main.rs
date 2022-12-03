@@ -53,7 +53,9 @@ struct GameState {
     paddle_2:   RectObject,
     ball:       RectObject,
     screen:     Rect,
-    event:      EventPump
+    event:      EventPump,
+    score_1:    i32,
+    score_2:    i32
 }
 
 
@@ -77,6 +79,20 @@ fn update(state : &mut GameState, delta_time : f32) {
     }
     if state.ball.world_rect().y + state.ball.world_rect().h >= state.screen.h {
         state.ball.velocity.y = -state.ball.velocity.y.abs();
+    }
+
+    // ball leaves court for score
+    if state.ball.position.x <= 0.0 {
+        println!("right scored");
+        state.score_2 += 1;
+        state.ball.position.x = (state.screen.w / 2) as f32;
+        state.ball.position.y = (state.screen.h / 2) as f32;
+    }
+    if state.ball.position.x >= state.screen.w as f32 {
+        println!("left scored");
+        state.score_1 += 1;
+        state.ball.position.x = (state.screen.w / 2) as f32;
+        state.ball.position.y = (state.screen.h / 2) as f32;
     }
 
     // "AI"
@@ -124,6 +140,10 @@ fn main() {
     let mut canvas = window.into_canvas().build().unwrap();
 
     let mut game_state = GameState {
+        // initialize scores
+        score_1: 0,
+        score_2: 0,
+
         // create the player paddle
         paddle_1: RectObject::new(
             Rect::new(-25/2, -50, 25, 100),
