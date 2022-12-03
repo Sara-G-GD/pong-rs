@@ -44,7 +44,7 @@ impl RectObject {
     }
 
     pub fn draw(&self, canvas : &mut WindowCanvas) {
-        canvas.fill_rect(self.world_rect());
+        canvas.fill_rect(self.world_rect()).unwrap();
     }
 }
 
