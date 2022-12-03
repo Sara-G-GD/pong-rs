@@ -26,7 +26,9 @@ struct RectObject {
 }
 
 impl RectObject {
-    pub fn new(rect : Rect, position : FVec, velocity : FVec) -> RectObject {
+    pub fn new(rect : Rect,
+               position : FVec,
+               velocity : FVec) -> RectObject {
        RectObject {
            rect: rect,
            position: position,
@@ -100,7 +102,6 @@ fn update(state : &mut GameState, delta_time : f32) {
 
 fn draw(state : &GameState, canvas : &mut WindowCanvas) {
     canvas.set_draw_color(Color::RGB(255,255,255));
-
     state.paddle_1.draw(canvas);
     state.paddle_2.draw(canvas);
     state.ball.draw(canvas);
@@ -177,7 +178,8 @@ fn main() {
         // poll and process events
         for event in game_state.event.poll_iter() {
             match event {
-                Event::Quit {..} | Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                Event::Quit {..} |
+                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
                     break 'running;
                 },
                 _ => {}
