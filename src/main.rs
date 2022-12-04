@@ -216,7 +216,8 @@ fn main() {
         for event in game_state.event.poll_iter() {
             match event {
                 Event::Quit {..} |
-                Event::KeyDown { keycode: Some(Keycode::Escape), .. } => {
+                Event::KeyDown { keycode: Some(Keycode::Escape), .. } |
+                Event::KeyDown { keycode: Some(Keycode::Q), .. } => {
                     break 'running;
                 },
                 _ => {}
