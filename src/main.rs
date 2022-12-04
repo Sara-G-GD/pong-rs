@@ -7,6 +7,7 @@ use sdl2::keyboard::{Keycode, Scancode};
 use sdl2::rect::Rect;
 use sdl2::render::WindowCanvas;
 use std::time::Instant;
+use sdl2::ttf::{self, Font};
 
 
 struct FVec {
@@ -48,14 +49,15 @@ impl RectObject {
     }
 }
 
-struct GameState {
+struct GameState<'a> {
     paddle_1:   RectObject,
     paddle_2:   RectObject,
     ball:       RectObject,
     screen:     Rect,
     event:      EventPump,
     score_1:    i32,
-    score_2:    i32
+    score_2:    i32,
+    font:       Option<Font<'a, 'a>>
 }
 
 
@@ -121,12 +123,26 @@ fn draw(state : &GameState, canvas : &mut WindowCanvas) {
     state.paddle_1.draw(canvas);
     state.paddle_2.draw(canvas);
     state.ball.draw(canvas);
+
+    let txtsurf = state.font.as_ref()
+        .unwrap()
+        .render(&format!("{} - {}", state.score_1, state.score_2))
+        .solid(Color::RGB(255,255,255))
+        .unwrap();
+
+    let texture_creator = canvas.texture_creator();
+    let texture = txtsurf.as_texture(&texture_creator).unwrap();
+    let dstrect = Rect::new(
+        state.screen.w/2 - txtsurf.rect().w/2, 0,
+        txtsurf.rect().w.try_into().unwrap(), txtsurf.rect().h.try_into().unwrap());
+    canvas.copy(&texture, txtsurf.rect(), dstrect).unwrap();
 }
 
 fn main() {
     // context stuff
     let context = sdl2::init().unwrap();
     let video = context.video().unwrap();
+    let font = ttf::init().unwrap();
 
     let w = 800i32;
     let h = 600i32;
@@ -143,6 +159,7 @@ fn main() {
         // initialize scores
         score_1: 0,
         score_2: 0,
+        font: Some(font.load_font("./IBMPlexMono-Regular.otf", 30).unwrap()),
 
         // create the player paddle
         paddle_1: RectObject::new(
